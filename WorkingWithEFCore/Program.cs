@@ -15,7 +15,9 @@ namespace WorkingWithEFCore
             // QueryingWithLike();
             // AddProduct(6, "masoud shayan", 500M);
             // IncreaseProductPrice("maso" , 10);
-            DeleteProducts("maso");
+            // DeleteProducts("maso");
+            // JoinCategoriesAndProducts();
+            GroupJoinCategoriesAndProducts();
         }
 
 
@@ -204,5 +206,67 @@ namespace WorkingWithEFCore
                 }
             }
         }
+
+        
+        
+        
+        // Inner Join 
+        static void JoinCategoriesAndProducts()
+        {
+            using (var db = new Northwind())
+            {
+                var query = db.Categories
+                    .Join(
+                        db.Products,
+                        category => category.CategoryID,
+                        product => product.CategoryID,
+                        (category, product) => new
+                        {
+                            category.CategoryName,
+                            product.ProductName,
+                            product.ProductID
+                        });
+
+
+                foreach (var item in query)
+                {
+                    Console.WriteLine($"{item.ProductID}: {item.ProductName} is in {item.CategoryName}.");
+                }
+            }
+        }
+
+        
+        
+        // Left Outer Join
+        static void GroupJoinCategoriesAndProducts()
+        {
+            using (var db = new Northwind())
+            {
+                // group all products by their category to return 8 matches
+                var queryGroup = db.Categories.AsEnumerable()
+                    .GroupJoin(
+                        db.Products,
+                        category => category.CategoryID,
+                        product => product.CategoryID,
+                        (c, matchingProducts)
+                            => new
+                            {
+                                c.CategoryName,
+                                Products = matchingProducts.OrderBy(p => p.ProductName)
+                            });
+                
+                
+                foreach (var item in queryGroup)
+                {
+                    Console.WriteLine($"{item.CategoryName} has {item.Products.Count()} products.");
+                    
+                    foreach (var product in item.Products)
+                    {
+                        Console.WriteLine($" {product.ProductName}");
+                    }
+                }
+            }
+        }
+        
     }
 }
