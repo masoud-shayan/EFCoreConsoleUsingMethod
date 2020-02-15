@@ -16,6 +16,7 @@ namespace WorkingWithEFCore
             // AddProduct(6, "masoud shayan", 500M);
             // IncreaseProductPrice("maso" , 10);
             // DeleteProducts("maso");
+            // SelectedFilterAndSort();
             // JoinCategoriesAndProducts();
             GroupJoinCategoriesAndProducts();
         }
@@ -207,6 +208,50 @@ namespace WorkingWithEFCore
             }
         }
 
+        
+        
+        
+        
+        
+        // select specific columns using select keyword
+        static void SelectedFilterAndSort()
+        {
+            using (var db = new Northwind())
+            {
+                // Select all column from Database
+                //
+                // IQueryable<Product> query = db.Products
+                //     .Where(product => (double) product.UnitPrice < (double) 10M)
+                //     .OrderByDescending(product => (double) product.UnitPrice);
+
+
+                // Select the the only columns that we want from Database
+
+                var query = db.Products
+                    .Where(product => (double)product.Cost < (double)10M)
+                    .OrderByDescending(product => (double)product.Cost)
+                    .Select(product => new
+                    {
+                        product.ProductID,
+                        product.ProductName,
+                        product.Cost
+                    });
+
+
+                Console.WriteLine("Products that cost less than $10:");
+
+                foreach (var product in query)
+                {
+                    Console.WriteLine("{0}: {1} costs {2:$#,##0.00}", product.ProductID, product.ProductName,
+                        product.Cost);
+                }
+
+                Console.WriteLine();
+            }
+        }
+        
+        
+        
         
         
         
