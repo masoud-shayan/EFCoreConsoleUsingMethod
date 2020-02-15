@@ -282,7 +282,7 @@ namespace WorkingWithEFCore
 
         
         
-        // Left Outer Join
+        // Left Outer Join or Group Join
         static void GroupJoinCategoriesAndProducts()
         {
             using (var db = new Northwind())
